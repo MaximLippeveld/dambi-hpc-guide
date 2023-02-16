@@ -19,11 +19,11 @@ chapters:
   - file: jobs/local_setup
   - file: jobs/hpc_setup
   - file: jobs/dependencies
-- file: advanced_topics
+- file: advanced_topics/intro
   sections:
-  - file: gpu
-  - file: benchmarking
-  - file: multinode
+  - file: advanced_topics/gpu
+  - file: advanced_topics/benchmarking
+  - file: advanced_topics/multinode
 - file: contribute
   sections:
   - file: markdown

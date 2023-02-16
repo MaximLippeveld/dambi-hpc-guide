@@ -4,7 +4,7 @@ Documentation for using the GPU cluster joltik or accelgor is provided in the ma
 
 When using a GPU cluster, first try a simple test script to see if your GPU is properly requested. This can usually be done using a single line of Python, e.g. `torch.cuda.is available()` in Pytorch.
 
-### PyTorch
+## PyTorch
 
 A pre-built PyTorch module is provided on joltik. Loading this module sets up python, CUDA, and pytorch.
 
