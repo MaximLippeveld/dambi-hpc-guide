@@ -11,8 +11,7 @@ Not any program or script can take advantage of multi-node computing. Generally,
 a program for multi-node computing:
 1. Write the program using a framework capable of distributed computing, such as [Dask](https://www.dask.org/) for
    Python or [Nextflow](https://www.nextflow.io/docs/latest/index.html).
-2. Using the split-apply-combine approach: partition the data, process each partition separately and merge the processed
-   partitions.
+2. Using batching: partition the data into batches, process each batch in parallel.
 
 The first approach is more involved as code likely needs to be updated, but it is also very powerful and flexible. The
 second approach requires only a bash script to submit jobs to the queue for every partition of the dataset, but can only
@@ -95,8 +94,8 @@ client = Client(cluster)  # Connect the client to the cluster
 At the moment when the line `cluster.scale(jobs=10)` is executed `dask-jobqueue` will submit ten jobs to the HPC cluster
 that will each run a worker. Since, `dask-jobqueue` submits jobs to the queue, you might be tempted to run the client
 script on the HPC login node, however, this is a misuse of the login node as the client script is a long running script
-that requires resources. Instead, the client script must be submitted to the HPC queue, and `dask-jobqueue` can then
-submit jobs from within the client job.
+that could slow down the login node for all users. Instead, the client script must be submitted to the HPC queue with
+`qsub`, and `dask-jobqueue` will then submit jobs from within the client job.
 
 ### Setup a Dask cluster using separate job scripts
 
@@ -109,12 +108,12 @@ Each of these components can  be submitted individually to the HPC job queue sys
 `Client` object which connects to the Dask cluster. Then, Dask provides two self-explanatory command line programs
 `dask-scheduler` and `dask-worker`, which can be submitted to setup the scheduler and workers.
 
-## Split-apply-combine
+## Batching
 
-In the split-apply-combine approach, the dataset is explicitly divided into smaller chunks, each chunk is processed
-separately, and the results are combined again. For example, a CSV of 100,000 rows can be processed by 100 jobs that
-each process 1000 rows. This approach has the benefit that it can be used to distribute any program or script over
-multiple nodes as you simply run the same program or script on smaller chunks of the input data.
+In the batching approach, the dataset is explicitly divided into smaller chunks, each chunk is processed in parallel
+over multiple nodes, and the results are optionally combined again. For example, a CSV of 100,000 rows can be processed
+by 100 jobs that each process 1000 rows. This approach has the benefit that it can be used to distribute any program or
+script over multiple nodes as you simply run the same program or script on smaller chunks of the input data.
 
 On the HPC, this can be achieved using job arrays, which are submitted like so:
 ```
